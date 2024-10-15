@@ -30,6 +30,7 @@ public class PestañaPrincipal extends javax.swing.JFrame {
         btnTabladeclientes = new javax.swing.JButton();
         btnBuscar = new javax.swing.JButton();
         btnagregar = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -44,7 +45,7 @@ public class PestañaPrincipal extends javax.swing.JFrame {
         labTitulo.setForeground(new java.awt.Color(51, 51, 255));
         labTitulo.setText("CONSULTORIA EMPRESARIAL SERVISERC ");
 
-        btnCerrar.setBackground(new java.awt.Color(0, 255, 102));
+        btnCerrar.setBackground(new java.awt.Color(255, 255, 102));
         btnCerrar.setText("Cerrar el programa");
         btnCerrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -76,6 +77,7 @@ public class PestañaPrincipal extends javax.swing.JFrame {
             }
         });
 
+        btnagregar.setBackground(new java.awt.Color(255, 255, 102));
         btnagregar.setText("Agregar Cliente");
         btnagregar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -83,23 +85,22 @@ public class PestañaPrincipal extends javax.swing.JFrame {
             }
         });
 
+        jButton1.setBackground(new java.awt.Color(255, 255, 102));
+        jButton1.setText("Administrar Usuarios");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(20, 20, 20)
-                        .addComponent(labTitulo))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(232, 232, 232)
-                        .addComponent(labTitulo2)))
-                .addContainerGap(18, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(107, Short.MAX_VALUE)
-                .addComponent(btnCerrar)
-                .addGap(57, 57, 57)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton1)
+                .addGap(77, 77, 77)
                 .addComponent(btnagregar)
                 .addGap(141, 141, 141))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
@@ -110,6 +111,18 @@ public class PestañaPrincipal extends javax.swing.JFrame {
                 .addGap(36, 36, 36)
                 .addComponent(btnTabladepagos)
                 .addGap(93, 93, 93))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(labTitulo))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(232, 232, 232)
+                        .addComponent(labTitulo2))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(189, 189, 189)
+                        .addComponent(btnCerrar)))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -125,9 +138,11 @@ public class PestañaPrincipal extends javax.swing.JFrame {
                     .addComponent(btnTabladepagos))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnCerrar)
-                    .addComponent(btnagregar))
-                .addContainerGap(56, Short.MAX_VALUE))
+                    .addComponent(btnagregar)
+                    .addComponent(jButton1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnCerrar)
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -178,6 +193,12 @@ public class PestañaPrincipal extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btnagregarActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+       Administraciondeusuarios nuevaVentana = new Administraciondeusuarios();
+        nuevaVentana.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -219,6 +240,7 @@ public class PestañaPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton btnTabladeclientes;
     private javax.swing.JButton btnTabladepagos;
     private javax.swing.JButton btnagregar;
+    private javax.swing.JButton jButton1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel labTitulo;
     private javax.swing.JLabel labTitulo2;
