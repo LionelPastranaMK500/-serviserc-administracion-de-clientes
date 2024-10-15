@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
+
 package com.sptv.mavenproject2;
 
 import java.math.BigDecimal;
@@ -93,19 +90,7 @@ private void loadData() {
         emf.close();
     }
 }
-private boolean validarCampos() {
-    if (rptnombre.getText().trim().isEmpty() || 
-        rptcorreo.getText().trim().isEmpty() || 
-        rpttelefono.getText().trim().isEmpty() || 
-        rpthonorarios.getText().trim().isEmpty() || 
-        rptregimen.getText().trim().isEmpty() || 
-        rptusuarioclavesol.getText().trim().isEmpty()) {
-        
-        JOptionPane.showMessageDialog(this, "Todos los campos de texto deben estar completos.", "Error", JOptionPane.WARNING_MESSAGE);
-        return false;
-    }
-    return true;
-}
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
