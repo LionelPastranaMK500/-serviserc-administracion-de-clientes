@@ -5,6 +5,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import javax.persistence.TypedQuery;
 import javax.swing.JOptionPane;
 import modelo.*;
 
@@ -20,6 +21,44 @@ public void agregarCliente() {
     EntityTransaction tx = em.getTransaction();
 
     try {
+        // Validaciones antes de comenzar la transacción
+        String ruc = txtruc.getText();
+
+        // 1. Verificar que el RUC tenga 11 dígitos
+        if (ruc.length() != 11 || !ruc.matches("\\d+")) {
+            JOptionPane.showMessageDialog(null, "El RUC debe tener exactamente 11 dígitos numéricos.");
+            return; // Terminar si no cumple la validación
+        }
+
+        // 2. Verificar que todos los campos estén rellenos
+        if (txtnombre.getText().isEmpty() || txtruc.getText().isEmpty() || 
+            txtfechadeactividades.getText().isEmpty() || txtprimeradec.getText().isEmpty() || 
+            txthonorarios.getText().isEmpty() || txtcorreo.getText().isEmpty() || 
+            txttelefono.getText().isEmpty() || txtregimen.getText().isEmpty() || 
+            txtusuarioclavesol.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Por favor, rellene todos los campos.");
+            return; // Terminar si algún campo está vacío
+        }
+
+        // 3. Verificar que las fechas estén en el formato correcto (YYYY-MM-DD)
+        try {
+            java.sql.Date.valueOf(txtfechadeactividades.getText());
+            java.sql.Date.valueOf(txtprimeradec.getText());
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(null, "Formato de fecha incorrecto. Use el formato año-mes-día (YYYY-MM-DD) si no es eso que la fecha sea correcta.");
+            return; // Terminar si las fechas no son válidas
+        }
+
+        // 4. Verificar si el RUC ya existe en la base de datos
+        TypedQuery<Long> query = em.createQuery("SELECT COUNT(c) FROM Cliente c WHERE c.ruc = :ruc", Long.class);
+        query.setParameter("ruc", ruc);
+        long count = query.getSingleResult();
+        
+        if (count > 0) {
+            JOptionPane.showMessageDialog(null, "Ya existe un cliente con este RUC en la base de datos.");
+            return; // Terminar si el RUC ya existe
+        }
+
         // Iniciar la transacción
         tx.begin();
 
@@ -69,7 +108,7 @@ public void agregarCliente() {
         // Persistir la cobranza
         em.persist(cobranza);
 
-        // Crear pagos mensuales para cada mes y año entre 2000 y 2030
+        // Crear pagos mensuales para cada mes y año entre 2024 y 2030
         for (int mes = 1; mes <= 12; mes++) {
             for (int anio = 2024; anio <= 2030; anio++) {
                 PagoMensual pagoMensual = new PagoMensual();
@@ -273,19 +312,19 @@ public void agregarCliente() {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(16, 16, 16)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addComponent(lblNombre)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(txtnombre, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(lblRegimen)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(txtregimen, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(txtnombre))
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addComponent(lblRuc, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(txtruc, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                        .addComponent(txtruc, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(lblRegimen)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(txtregimen, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE))))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(91, 91, 91)
                                 .addComponent(lblTitulo))
@@ -310,7 +349,7 @@ public void agregarCliente() {
                                         .addComponent(lblCorreo)
                                         .addGap(18, 18, 18)
                                         .addComponent(txtcorreo, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                        .addGap(0, 18, Short.MAX_VALUE))
+                        .addGap(0, 12, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(16, 16, 16)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -324,7 +363,7 @@ public void agregarCliente() {
                                     .addComponent(checboxregistrodeventas)
                                     .addComponent(checboxregistrodecompras)
                                     .addComponent(checboxdiariocompras))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 171, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 165, Short.MAX_VALUE)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(btnagregar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(btnVolveraCasa, javax.swing.GroupLayout.Alignment.TRAILING)))
@@ -333,17 +372,12 @@ public void agregarCliente() {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(txttelefono, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addComponent(lblSubTituloClavesol)
-                                .addGap(221, 588, Short.MAX_VALUE))
+                            .addComponent(lblSubTituloClavesol)
+                            .addComponent(lblSubTituloLibros)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lblSubTituloLibros)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(lblUsuarioclave)
-                                        .addGap(34, 34, 34)
-                                        .addComponent(txtusuarioclavesol, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                                .addComponent(lblUsuarioclave)
+                                .addGap(34, 34, 34)
+                                .addComponent(txtusuarioclavesol, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -474,7 +508,7 @@ public void agregarCliente() {
     }//GEN-LAST:event_txtusuarioclavesolActionPerformed
 
     private void btnagregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnagregarActionPerformed
- 
+
         agregarCliente();
 
     }//GEN-LAST:event_btnagregarActionPerformed
