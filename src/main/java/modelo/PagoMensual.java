@@ -2,8 +2,6 @@ package modelo;
 
 import java.io.Serializable;
 import javax.persistence.*;
-import java.math.BigDecimal;
-import modelo.Cliente;
 
 @Entity
 @Table(name = "PagoMensual")
@@ -26,8 +24,6 @@ public class PagoMensual implements Serializable {
 
     @Column(name = "monto", nullable = false)
     private double monto;
-
-    // Getters y Setters
 
     public Long getIdpago() {
         return idpago;
@@ -65,6 +61,11 @@ public class PagoMensual implements Serializable {
         return monto;
     }
 
-    public void setMonto(Double monto) {
+    public void setMonto(double monto) {
         this.monto = monto;
-    }}
+    }
+
+    public void setMonto(Double monto) {
+        this.monto = monto != null ? monto : 0.0;
+    }
+}

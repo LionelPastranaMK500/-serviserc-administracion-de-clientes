@@ -1,18 +1,21 @@
 package persistance;
 
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
-import java.util.List;
 import modelo.PagoMensual;
 
 public class PagoMensualJpaController {
 
-     private EntityManagerFactory emf = null;
+    private final EntityManagerFactory emf;
 
     public PagoMensualJpaController() {
-        emf = Persistence.createEntityManagerFactory("persisventas");
+        this(PersistenceManager.getEntityManagerFactory());
+    }
+
+    public PagoMensualJpaController(EntityManagerFactory emf) {
+        this.emf = emf;
     }
 
     public EntityManager getEntityManager() {
@@ -26,7 +29,10 @@ public class PagoMensualJpaController {
             em.persist(pagoMensual);
             em.getTransaction().commit();
         } catch (Exception ex) {
-            if (findPagoMensual(pagoMensual.getIdpago()) != null) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            if (pagoMensual.getIdpago() != null && findPagoMensual(pagoMensual.getIdpago()) != null) {
                 throw new RuntimeException("PagoMensual already exists.", ex);
             }
             throw new RuntimeException("Error while creating PagoMensual.", ex);
@@ -39,10 +45,13 @@ public class PagoMensualJpaController {
         EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
-            pagoMensual = em.merge(pagoMensual);
+            em.merge(pagoMensual);
             em.getTransaction().commit();
         } catch (Exception ex) {
-            if (findPagoMensual(pagoMensual.getIdpago()) == null) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            if (pagoMensual.getIdpago() != null && findPagoMensual(pagoMensual.getIdpago()) == null) {
                 throw new RuntimeException("The pagoMensual with id " + pagoMensual.getIdpago() + " no longer exists.", ex);
             }
             throw new RuntimeException("Error while editing PagoMensual.", ex);
@@ -58,12 +67,20 @@ public class PagoMensualJpaController {
             PagoMensual pagoMensual;
             try {
                 pagoMensual = em.getReference(PagoMensual.class, idpago);
-                pagoMensual.getIdpago(); // Esto lanzará una excepción si no existe
+                pagoMensual.getIdpago();
             } catch (Exception e) {
+                if (em.getTransaction().isActive()) {
+                    em.getTransaction().rollback();
+                }
                 throw new RuntimeException("The pagoMensual with id " + idpago + " no longer exists.", e);
             }
             em.remove(pagoMensual);
             em.getTransaction().commit();
+        } catch (RuntimeException ex) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw ex;
         } finally {
             em.close();
         }
@@ -73,6 +90,17 @@ public class PagoMensualJpaController {
         EntityManager em = getEntityManager();
         try {
             return em.find(PagoMensual.class, idpago);
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<PagoMensual> findByYear(int year) {
+        EntityManager em = getEntityManager();
+        try {
+            return em.createQuery("SELECT p FROM PagoMensual p WHERE p.año = :year", PagoMensual.class)
+                    .setParameter("year", year)
+                    .getResultList();
         } finally {
             em.close();
         }

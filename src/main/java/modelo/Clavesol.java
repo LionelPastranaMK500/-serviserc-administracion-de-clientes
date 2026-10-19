@@ -1,4 +1,5 @@
 package modelo;
+
 import java.io.Serializable;
 import javax.persistence.*;
 
@@ -21,13 +22,20 @@ public class Clavesol implements Serializable {
     @JoinColumn(name = "ruc", referencedColumnName = "ruc")
     private Cliente cliente;
 
-    // Getters and setters
     public Long getIdusuario() {
         return idClavesol;
     }
 
     public void setIdusuario(Long idusuario) {
         this.idClavesol = idusuario;
+    }
+
+    public Long getIdClavesol() {
+        return idClavesol;
+    }
+
+    public void setIdClavesol(Long idClavesol) {
+        this.idClavesol = idClavesol;
     }
 
     public String getUsuario() {

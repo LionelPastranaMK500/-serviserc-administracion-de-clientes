@@ -1,10 +1,11 @@
 package modelo;
 
 import java.io.Serializable;
-import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.Objects;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "Cliente")
@@ -15,7 +16,7 @@ public class Cliente implements Serializable {
     @Column(name = "idcliente")
     private Long idcliente;
 
-    @Column(name = "nombre")
+    @Column(name = "nombre", length = 150)
     private String nombre;
 
     @Column(name = "ruc", unique = true, length = 11)
@@ -27,24 +28,23 @@ public class Cliente implements Serializable {
     @Column(name = "primeradec")
     private Date primeradec;
 
-    @Column(name = "honorarios")
+    @Column(name = "honorarios", precision = 12, scale = 2)
     private BigDecimal honorarios;
 
     @Column(name = "numerodecliente", length = 30)
     private String numerodecliente;
 
-    @Column(name = "correo", length = 30)
+    @Column(name = "correo", length = 100)
     private String correo;
 
     @Column(name = "telefono", length = 25)
     private String telefono;
 
-    @Column(name = "regimen", length = 40)
+    @Column(name = "regimen", length = 60)
     private String regimen;
 
     @Column(name = "fechadeingreso", nullable = false, updatable = false)
     private Timestamp fechadeingreso;
-    
 
     // Constructor sin argumentos
     public Cliente() {
@@ -139,5 +139,23 @@ public class Cliente implements Serializable {
 
     public void setFechadeingreso(Timestamp fechadeingreso) {
         this.fechadeingreso = fechadeingreso;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Cliente)) return false;
+        Cliente cliente = (Cliente) o;
+        return Objects.equals(idcliente, cliente.idcliente) && Objects.equals(ruc, cliente.ruc);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idcliente, ruc);
+    }
+
+    @Override
+    public String toString() {
+        return (nombre != null ? nombre : "Sin nombre") + " (RUC: " + (ruc != null ? ruc : "-") + ")";
     }
 }

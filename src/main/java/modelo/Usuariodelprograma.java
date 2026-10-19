@@ -63,5 +63,23 @@ public class Usuariodelprograma implements Serializable {
         this.contraseña = contraseña;
     }
 
-    // Puedes agregar métodos adicionales, como para verificar contraseñas
+    public Long getId() {
+        return idusuario;
+    }
+
+    public String getUsuario() {
+        return nombre;
+    }
+
+    public void setUsuario(String usuario) {
+        this.nombre = usuario;
+    }
+
+    public String getContrasena() {
+        return contraseña;
+    }
+
+    public void setContrasena(String contrasena) {
+        this.contraseña = contrasena;
+    }
 }

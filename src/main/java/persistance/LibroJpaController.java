@@ -1,16 +1,20 @@
 package persistance;
 
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import modelo.Libro;
 
 public class LibroJpaController {
 
-    private EntityManagerFactory emf = null;
+    private final EntityManagerFactory emf;
 
     public LibroJpaController() {
-        emf = Persistence.createEntityManagerFactory("persisventas");
+        this(PersistenceManager.getEntityManagerFactory());
+    }
+
+    public LibroJpaController(EntityManagerFactory emf) {
+        this.emf = emf;
     }
 
     public EntityManager getEntityManager() {
@@ -23,6 +27,11 @@ public class LibroJpaController {
             em.getTransaction().begin();
             em.persist(libro);
             em.getTransaction().commit();
+        } catch (RuntimeException ex) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw ex;
         } finally {
             em.close();
         }
@@ -32,8 +41,13 @@ public class LibroJpaController {
         EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
-            libro = em.merge(libro);
+            em.merge(libro);
             em.getTransaction().commit();
+        } catch (Exception ex) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw ex;
         } finally {
             em.close();
         }
@@ -48,6 +62,11 @@ public class LibroJpaController {
                 em.remove(libro);
             }
             em.getTransaction().commit();
+        } catch (Exception ex) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw ex;
         } finally {
             em.close();
         }
@@ -57,6 +76,19 @@ public class LibroJpaController {
         EntityManager em = getEntityManager();
         try {
             return em.find(Libro.class, id);
+        } finally {
+            em.close();
+        }
+    }
+
+    public Libro findByRuc(String ruc) {
+        EntityManager em = getEntityManager();
+        try {
+            List<Libro> list = em.createQuery(
+                            "SELECT l FROM Libro l WHERE l.cliente.ruc = :ruc", Libro.class)
+                    .setParameter("ruc", ruc)
+                    .getResultList();
+            return list.isEmpty() ? null : list.get(0);
         } finally {
             em.close();
         }

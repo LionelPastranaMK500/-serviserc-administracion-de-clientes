@@ -1,20 +1,23 @@
 package persistance;
 
+import java.io.Serializable;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 import javax.persistence.Query;
-import java.io.Serializable;
-import java.util.List;
 import modelo.ContrasenaGeneral;
 
 public class ContrasenaGeneralJpaController implements Serializable {
 
-    private EntityManagerFactory emf = null;
+    private final EntityManagerFactory emf;
 
     public ContrasenaGeneralJpaController() {
-        emf = Persistence.createEntityManagerFactory("persisventas");
+        this(PersistenceManager.getEntityManagerFactory());
+    }
+
+    public ContrasenaGeneralJpaController(EntityManagerFactory emf) {
+        this.emf = emf;
     }
 
     public EntityManager getEntityManager() {
@@ -92,10 +95,11 @@ public class ContrasenaGeneralJpaController implements Serializable {
         return findContrasenaGeneralEntities(false, maxResults, firstResult);
     }
 
+    @SuppressWarnings("unchecked")
     private List<ContrasenaGeneral> findContrasenaGeneralEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
-            String jpql = "SELECT c FROM ContrasenaGeneral c";
+            String jpql = "SELECT c FROM ContrasenaGeneral c ORDER BY c.id ASC";
             Query q = em.createQuery(jpql);
             if (!all) {
                 q.setMaxResults(maxResults);

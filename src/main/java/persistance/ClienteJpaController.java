@@ -3,18 +3,23 @@ package persistance;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import modelo.Cliente;
 
 public class ClienteJpaController {
-    private EntityManagerFactory emf = null;
+
+    private final EntityManagerFactory emf;
 
     public ClienteJpaController() {
-        this.emf = Persistence.createEntityManagerFactory("persisventas");
+        this(PersistenceManager.getEntityManagerFactory());
     }
 
-    private EntityManager getEntityManager() {
+    public ClienteJpaController(EntityManagerFactory emf) {
+        this.emf = emf;
+    }
+
+    public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
 
@@ -24,10 +29,12 @@ public class ClienteJpaController {
             em.getTransaction().begin();
             em.persist(cliente);
             em.getTransaction().commit();
-        } finally {
+        } catch (RuntimeException ex) {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
+            throw ex;
+        } finally {
             em.close();
         }
     }
@@ -36,12 +43,14 @@ public class ClienteJpaController {
         EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
-            cliente = em.merge(cliente);
+            em.merge(cliente);
             em.getTransaction().commit();
-        } finally {
+        } catch (RuntimeException ex) {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
+            throw ex;
+        } finally {
             em.close();
         }
     }
@@ -55,10 +64,12 @@ public class ClienteJpaController {
                 em.remove(cliente);
             }
             em.getTransaction().commit();
-        } finally {
+        } catch (RuntimeException ex) {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
+            throw ex;
+        } finally {
             em.close();
         }
     }
@@ -71,23 +82,32 @@ public class ClienteJpaController {
             em.close();
         }
     }
+
     public Cliente findByRuc(String ruc) {
-        EntityManager em = emf.createEntityManager();
-        Cliente cliente = null;
+        EntityManager em = getEntityManager();
         try {
-            TypedQuery<Cliente> query = em.createQuery("SELECT c FROM Cliente c WHERE c.ruc = :ruc", Cliente.class);
+            TypedQuery<Cliente> query = em.createQuery(
+                    "SELECT c FROM Cliente c WHERE c.ruc = :ruc", Cliente.class);
             query.setParameter("ruc", ruc);
-            cliente = query.getSingleResult();
-        } catch (Exception e) {
-            e.printStackTrace();
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
         } finally {
             em.close();
         }
-        return cliente;
+    }
+
+    public List<Cliente> findClienteEntities() {
+        EntityManager em = getEntityManager();
+        try {
+            return em.createQuery("SELECT c FROM Cliente c ORDER BY c.idcliente ASC", Cliente.class)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
     }
 
     public void close() {
-        emf.close();
+        // El cierre global lo administra PersistenceManager
     }
-
 }

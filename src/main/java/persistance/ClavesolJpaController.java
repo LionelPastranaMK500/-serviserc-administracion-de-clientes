@@ -1,16 +1,20 @@
 package persistance;
 
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import modelo.Clavesol;
 
 public class ClavesolJpaController {
 
-    private EntityManagerFactory emf = null;
+    private final EntityManagerFactory emf;
 
     public ClavesolJpaController() {
-        emf = Persistence.createEntityManagerFactory("persisventas");
+        this(PersistenceManager.getEntityManagerFactory());
+    }
+
+    public ClavesolJpaController(EntityManagerFactory emf) {
+        this.emf = emf;
     }
 
     public EntityManager getEntityManager() {
@@ -23,6 +27,11 @@ public class ClavesolJpaController {
             em.getTransaction().begin();
             em.persist(usuario);
             em.getTransaction().commit();
+        } catch (RuntimeException ex) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw ex;
         } finally {
             em.close();
         }
@@ -32,8 +41,13 @@ public class ClavesolJpaController {
         EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
-            usuario = em.merge(usuario);
+            em.merge(usuario);
             em.getTransaction().commit();
+        } catch (Exception ex) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw ex;
         } finally {
             em.close();
         }
@@ -48,6 +62,11 @@ public class ClavesolJpaController {
                 em.remove(usuario);
             }
             em.getTransaction().commit();
+        } catch (Exception ex) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw ex;
         } finally {
             em.close();
         }
@@ -57,6 +76,19 @@ public class ClavesolJpaController {
         EntityManager em = getEntityManager();
         try {
             return em.find(Clavesol.class, id);
+        } finally {
+            em.close();
+        }
+    }
+
+    public Clavesol findByRuc(String ruc) {
+        EntityManager em = getEntityManager();
+        try {
+            List<Clavesol> list = em.createQuery(
+                            "SELECT cl FROM Clavesol cl WHERE cl.cliente.ruc = :ruc", Clavesol.class)
+                    .setParameter("ruc", ruc)
+                    .getResultList();
+            return list.isEmpty() ? null : list.get(0);
         } finally {
             em.close();
         }

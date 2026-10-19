@@ -1,0 +1,19 @@
+# ==============================================================================
+# ServiSerc — Configuración de Base de Datos (Plantilla de Ejemplo)
+# ==============================================================================
+# Copia este archivo a `config/database.properties` o define las variables de
+# entorno equivalentes (SERVISERC_DB_MODE, SERVISERC_DB_URL, SERVISERC_DB_USER,
+# SERVISERC_DB_PASSWORD).
+#
+# Modos soportados (serviserc.db.mode):
+#   - auto     : Intenta conectar a MySQL si está disponible; de lo contrario usa
+#                automáticamente la base de datos local embebida H2 (modo MySQL).
+#   - mysql    : Fuerza el uso exclusivo de MySQL.
+#   - embedded : Fuerza el uso de la base de datos local H2 en ./data/serviserc_db.
+# ==============================================================================
+
+serviserc.db.mode=auto
+serviserc.db.url=jdbc:mysql://127.0.0.1:3306/serviserc?serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true
+serviserc.db.user=root
+serviserc.db.password=CHANGE_ME
+serviserc.db.driver=com.mysql.cj.jdbc.Driver

@@ -1,114 +1,153 @@
 package persistance;
 
+import java.util.List;
 import modelo.*;
 
+/**
+ * Fachada de persistencia corregida (en el sistema legado los métodos eran privados
+ * e invocaban Long.MIN_VALUE en operaciones de búsqueda y eliminación).
+ */
 public class Controladoradeperistencia {
 
-    ClavesolJpaController clavejpa = new ClavesolJpaController();
-    ClienteJpaController clientejpa = new ClienteJpaController();
-    CobranzaJpaController cobranzajpa = new CobranzaJpaController();
-    LibroJpaController librojpa = new LibroJpaController();
-    PagoMensualJpaController pagomenjpa = new PagoMensualJpaController();
-    UsuariodelprogramaJpaController usuarioappjpa = new UsuariodelprogramaJpaController();
+    private final ClavesolJpaController clavejpa = new ClavesolJpaController();
+    private final ClienteJpaController clientejpa = new ClienteJpaController();
+    private final CobranzaJpaController cobranzajpa = new CobranzaJpaController();
+    private final LibroJpaController librojpa = new LibroJpaController();
+    private final PagoMensualJpaController pagomenjpa = new PagoMensualJpaController();
+    private final UsuariodelprogramaJpaController usuarioappjpa = new UsuariodelprogramaJpaController();
+    private final ContrasenaGeneralJpaController contrasenageneraljpa = new ContrasenaGeneralJpaController();
 
-    private void crearclavesol(Clavesol clavesol) {
+    // Métodos para Clavesol
+    public void crearclavesol(Clavesol clavesol) {
         clavejpa.create(clavesol);
     }
 
-    private void editarclavesol(Clavesol clavesol) throws Exception {
+    public void editarclavesol(Clavesol clavesol) throws Exception {
         clavejpa.edit(clavesol);
     }
 
-    private void eliminarclavesol(Clavesol clavesol) throws Exception {
-        clavejpa.destroy(Long.MIN_VALUE);
+    public void eliminarclavesol(Clavesol clavesol) throws Exception {
+        if (clavesol != null && clavesol.getIdusuario() != null) {
+            clavejpa.destroy(clavesol.getIdusuario());
+        }
     }
 
-    private void buscarclavesol(Clavesol clavesol) {
-        clavejpa.findUsuario(Long.MIN_VALUE);
+    public Clavesol buscarclavesol(Long id) {
+        return clavejpa.findUsuario(id);
     }
 
-// Métodos para Cliente
-    private void crearcliente(Cliente cliente) {
+    // Métodos para Cliente
+    public void crearcliente(Cliente cliente) {
         clientejpa.create(cliente);
     }
 
-    private void editarcliente(Cliente cliente) throws Exception {
+    public void editarcliente(Cliente cliente) {
         clientejpa.edit(cliente);
     }
 
-    private void eliminarcliente(Cliente cliente) throws Exception {
-        clientejpa.destroy(Long.MIN_VALUE);
+    public void eliminarcliente(Cliente cliente) {
+        if (cliente != null && cliente.getIdcliente() != null) {
+            clientejpa.destroy(cliente.getIdcliente());
+        }
     }
 
-    private void buscarcliente(Cliente cliente) {
-        clientejpa.findCliente(Long.MIN_VALUE);
+    public Cliente buscarcliente(Long id) {
+        return clientejpa.findCliente(id);
     }
 
-// Métodos para Cobranza
-    private void crearcobranza(Cobranza cobranza) {
+    public Cliente buscarClientePorRuc(String ruc) {
+        return clientejpa.findByRuc(ruc);
+    }
+
+    public List<Cliente> listarClientes() {
+        return clientejpa.findClienteEntities();
+    }
+
+    // Métodos para Cobranza
+    public void crearcobranza(Cobranza cobranza) {
         cobranzajpa.create(cobranza);
     }
 
-    private void editarcobranza(Cobranza cobranza) throws Exception {
+    public void editarcobranza(Cobranza cobranza) throws Exception {
         cobranzajpa.edit(cobranza);
     }
 
-    private void eliminarcobranza(Cobranza cobranza) throws Exception {
-        cobranzajpa.destroy(Long.MIN_VALUE);
+    public void eliminarcobranza(Cobranza cobranza) throws Exception {
+        if (cobranza != null && cobranza.getIdcobranza() != null) {
+            cobranzajpa.destroy(cobranza.getIdcobranza());
+        }
     }
 
-    private void buscarcobranza(Cobranza cobranza) {
-        cobranzajpa.findCobranza(Long.MIN_VALUE);
+    public Cobranza buscarcobranza(Long id) {
+        return cobranzajpa.findCobranza(id);
     }
 
-// Métodos para Libro
-    private void crearlibro(Libro libro) {
+    // Métodos para Libro
+    public void crearlibro(Libro libro) {
         librojpa.create(libro);
     }
 
-    private void editarlibro(Libro libro) throws Exception {
+    public void editarlibro(Libro libro) throws Exception {
         librojpa.edit(libro);
     }
 
-    private void eliminarlibro(Libro libro) throws Exception {
-        librojpa.destroy(Long.MIN_VALUE);
+    public void eliminarlibro(Libro libro) throws Exception {
+        if (libro != null && libro.getIdlibros() != null) {
+            librojpa.destroy(libro.getIdlibros());
+        }
     }
 
-    private void buscarlibro(Libro libro) {
-        librojpa.findLibro(Long.MIN_VALUE);
+    public Libro buscarlibro(Long id) {
+        return librojpa.findLibro(id);
     }
 
-// Métodos para PagoMensual
-    private void crearpagomensual(PagoMensual pagomensual) {
+    // Métodos para PagoMensual
+    public void crearpagomensual(PagoMensual pagomensual) {
         pagomenjpa.create(pagomensual);
     }
 
-    private void editarpagomensual(PagoMensual pagomensual) throws Exception {
+    public void editarpagomensual(PagoMensual pagomensual) {
         pagomenjpa.edit(pagomensual);
     }
 
-    private void eliminarpagomensual(PagoMensual pagomensual) throws Exception {
-        pagomenjpa.destroy(Long.MIN_VALUE);
+    public void eliminarpagomensual(PagoMensual pagomensual) {
+        if (pagomensual != null && pagomensual.getIdpago() != null) {
+            pagomenjpa.destroy(pagomensual.getIdpago());
+        }
     }
 
-    private void buscarpagomensual(PagoMensual pagomensual) {
-        pagomenjpa.findPagoMensual(Long.MIN_VALUE);
+    public PagoMensual buscarpagomensual(Long id) {
+        return pagomenjpa.findPagoMensual(id);
     }
 
-// Métodos para Usuariodelprograma
-    private void crearusuarioapp(Usuariodelprograma usuarioapp) throws Exception {
+    // Métodos para Usuariodelprograma
+    public void crearusuarioapp(Usuariodelprograma usuarioapp) throws Exception {
         usuarioappjpa.create(usuarioapp);
     }
 
-    private void editarusuarioapp(Usuariodelprograma usuarioapp) throws Exception {
+    public void editarusuarioapp(Usuariodelprograma usuarioapp) throws Exception {
         usuarioappjpa.edit(usuarioapp);
     }
 
-    private void eliminarusuarioapp(Usuariodelprograma usuarioapp) throws Exception {
-        usuarioappjpa.destroy(Long.MIN_VALUE);
+    public void eliminarusuarioapp(Usuariodelprograma usuarioapp) throws Exception {
+        if (usuarioapp != null && usuarioapp.getIdusuario() != null) {
+            usuarioappjpa.destroy(usuarioapp.getIdusuario());
+        }
     }
 
-    private void buscarusuarioapp(Usuariodelprograma usuarioapp) {
-        usuarioappjpa.findUsuariodelprograma(Long.MIN_VALUE);
+    public Usuariodelprograma buscarusuarioapp(Long id) {
+        return usuarioappjpa.findUsuariodelprograma(id);
+    }
+
+    public ContrasenaGeneralJpaController getContrasenaGeneralJpaController() {
+        return contrasenageneraljpa;
+    }
+
+    public Cliente buscarCliente(Long id) {
+        return buscarcliente(id);
+    }
+
+    public List<PagoMensual> listarPagosMensuales() {
+        return pagomenjpa.findPagoMensualEntities();
     }
 }
